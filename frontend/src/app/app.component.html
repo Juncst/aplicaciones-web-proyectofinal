@@ -1,0 +1,113 @@
+<mat-toolbar class="topbar">
+  <div class="topbar-content">
+    <span>Proyecto Final App Web</span>
+    <small>Eventos en tiempo real</small>
+  </div>
+</mat-toolbar>
+
+<main class="page">
+  <section class="hero">
+    <div>
+      <span class="eyebrow">PostgreSQL · Node.js · Angular</span>
+      <h1>Monitoreo de cambios en tiempo real</h1>
+      <p>
+        Esta pantalla muestra los registros de la tabla <strong>my_friends</strong>
+        y actualiza la información cuando PostgreSQL emite un evento desde la base de datos.
+      </p>
+    </div>
+
+    <div class="status-pill">
+      <span class="status-dot"></span>
+      Escuchando eventos
+    </div>
+  </section>
+
+  <section class="dashboard-grid">
+    <mat-card class="card table-card">
+      <div class="card-header">
+        <div>
+          <mat-card-title>Tabla my_friends</mat-card-title>
+          <mat-card-subtitle>
+            Datos cargados desde PostgreSQL por medio del backend
+          </mat-card-subtitle>
+        </div>
+      </div>
+
+      <div class="table-wrapper">
+        <table mat-table [dataSource]="friends" class="table">
+
+          <ng-container matColumnDef="id">
+            <th mat-header-cell *matHeaderCellDef>ID</th>
+            <td mat-cell *matCellDef="let friend">{{ friend.id }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="name">
+            <th mat-header-cell *matHeaderCellDef>Nombre</th>
+            <td mat-cell *matCellDef="let friend">{{ friend.name }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="gender">
+            <th mat-header-cell *matHeaderCellDef>Genero</th>
+            <td mat-cell *matCellDef="let friend">{{ friend.gender }}</td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+      </div>
+    </mat-card>
+
+    <mat-card class="card event-card" *ngIf="lastChange; else waitingTemplate">
+      <div class="card-header">
+        <div>
+          <mat-card-title>Ultimo evento recibido</mat-card-title>
+          <mat-card-subtitle>
+            Cambio detectado desde PostgreSQL
+          </mat-card-subtitle>
+        </div>
+      </div>
+
+      <mat-divider></mat-divider>
+
+      <div class="event-list">
+        <div class="event-item">
+          <span>Tabla</span>
+          <strong>{{ lastChange.table }}</strong>
+        </div>
+
+        <div class="event-item">
+          <span>Columna modificada</span>
+          <strong>{{ lastChange.column }}</strong>
+        </div>
+
+        <div class="event-item">
+          <span>Valor anterior</span>
+          <strong>{{ lastChange.oldValue }}</strong>
+        </div>
+
+        <div class="event-item highlight">
+          <span>Valor nuevo</span>
+          <strong>{{ lastChange.newValue }}</strong>
+        </div>
+      </div>
+    </mat-card>
+
+    <ng-template #waitingTemplate>
+      <mat-card class="card event-card waiting-card">
+        <div class="card-header">
+          <div>
+            <mat-card-title>Esperando cambios</mat-card-title>
+            <mat-card-subtitle>
+              Ejecuta un UPDATE en PostgreSQL para ver el evento.
+            </mat-card-subtitle>
+          </div>
+        </div>
+
+        <div class="empty-state">
+          <div class="empty-icon"></div>
+          <p>No se ha recibido ningun cambio todavia.</p>
+        </div>
+      </mat-card>
+    </ng-template>
+  </section>
+</main>
